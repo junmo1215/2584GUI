@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:_2584interface"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="2584" Height="500" Width="500" KeyDown="Window_KeyDown">
+    <Grid x:Name="mainRect">
+        <Canvas x:Name="mainCanvas" HorizontalAlignment="Left" Height="400" Margin="50" VerticalAlignment="Top" Width="400" Panel.ZIndex="-3" Loaded="mainCanvas_Loaded"/>
     </Grid>
 </Window>

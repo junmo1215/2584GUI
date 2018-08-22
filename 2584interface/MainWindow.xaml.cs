@@ -20,9 +20,62 @@ namespace _2584interface
     /// </summary>
     public partial class MainWindow : Window
     {
+        Board b;
+        Evil evil;
+        Player player;
         public MainWindow()
         {
             InitializeComponent();
+            b = new Board(mainCanvas);
+            evil = new Evil();
+            player = new Player();
+        }
+        
+        //Tile tile;
+        //private void Canvas_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    //< Image HorizontalAlignment = "Left" Height = "100" VerticalAlignment = "Top" Width = "100" Canvas.Left = "0" Canvas.Top = "0" />
+        //    tile = new Tile(0, 0, 2);
+        //    mainCanvas.Children.Add(tile.img);
+        //    //Image img = new Image();
+        //    //BitmapImage b = new BitmapImage();
+        //    //b.BeginInit();
+        //    //b.UriSource = new Uri(@"D:\code\2584interface\2584interface\resource\th.jpg");
+        //    //b.EndInit();
+        //    //img.Source = b;
+        //    //img.Visibility = Visibility.Visible;
+        //    //mainCanvas.Children.Add(img);
+        //}
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Left)
+            {
+                //tile.MoveTo(tile.X - 1, tile.Y);
+                b.MoveLeft();
+            }
+            else if (e.Key == Key.Right)
+            {
+                //tile.MoveTo(tile.X + 1, tile.Y);
+            }
+            else if (e.Key == Key.Down)
+            {
+                //tile.MoveTo(tile.X, tile.Y + 1);
+            }
+            else if (e.Key == Key.Up)
+            {
+                //tile.MoveTo(tile.X, tile.Y - 1);
+            }
+        }
+
+        private void mainCanvas_Loaded(object sender, RoutedEventArgs e)
+        {
+            //int action = evil.ChooseAction(b);
+            //b.TakeEvilAction(action);
+            //action = evil.ChooseAction(b);
+            //b.TakeEvilAction(action);
+            b.TakeEvilAction(0);
+            b.TakeEvilAction(2);
         }
     }
 }
