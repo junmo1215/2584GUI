@@ -76,6 +76,18 @@ namespace _2584interface
             //b.TakeEvilAction(action);
             b.TakeEvilAction(0);
             b.TakeEvilAction(2);
+
+            b.TakeEvilAction(5);
+            b.TakeEvilAction(6);
+
+            b.TakeEvilAction(8);
+            b.TakeEvilAction(9);
+            b.TakeEvilAction(10);
+            b.TakeEvilAction(11);
+
+            b.TakeEvilAction(13);
+            b.TakeEvilAction(14);
+            b.TakeEvilAction(15);
         }
     }
 }

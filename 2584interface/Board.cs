@@ -73,39 +73,115 @@ namespace _2584interface
             return (tile == 1 && hold == 1) || (tile - hold) == 1 || (tile - hold) == -1;
         }
 
-        public int MoveLeft()
+        //public int MoveLeft()
+        //{
+        //    Tile[,] prev = board;
+        //    int score = 0;
+        //    for (int r = 0; r < 4; r++)
+        //    {
+        //        Tile[] row =
+        //        {
+        //            board[r, 0], board[r, 1], board[r, 2], board[r, 3]
+        //        };
+        //        int top = 0;
+        //        int hold = 0;
+        //        for (int c = 0; c < 4; c++)
+        //        {
+        //            Tile tile = row[c];
+        //            if (tile == null) continue;
+        //            row[c] = null;
+        //            if (hold != 0)
+        //            {
+        //                if (CanCombine(tile.index, hold))
+        //                {
+        //                    int newIndex = (tile.index > hold) ? tile.index : hold;
+        //                    newIndex++;
+        //                    row[top++] = new Tile(r, c, newIndex);
+        //                    score += fibonacci[newIndex];
+        //                    hold = 0;
+        //                }
+        //                else
+        //                {
+        //                    row[top++] = hold;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                hold = tile.index;
+        //            }
+        //        }
+        //    }
+        //    return -1;
+        //}
+
+        bool CombineLine(int begin_index, int end_index, int[] row, out int score)
         {
-            Tile[,] prev = board;
-            int score = 0;
-            for (int r = 0; r < 4; r++)
+            int top = 0, hold = 0;
+            score = 0;
+            bool moved = false;
+            for (int c = 0; c < COL; c++)
             {
-                Tile[] row =
+                int tile = row[c];
+                if (tile == 0) continue;
+                row[c] = 0;
+                if (hold != 0)
                 {
-                    board[r, 0], board[r, 1], board[r, 2], board[r, 3]
-                };
-                int top = 0, hold = 0;
-                for (int c = 0; c < 4; c++)
-                {
-                    Tile tile = row[c];
-                    if (tile == null) continue;
-                    row[c] = null;
-                    if (hold != 0)
+                    if (CanCombine(tile, hold))
                     {
-                        if (CanCombine(tile.index, hold))
-                        {
-                            int newIndex = (tile.index > hold) ? tile.index : hold;
-                            row[top++] = new Tile(r, c, newIndex);
-                            score += fibonacci[tile.index];
-                            hold = 0;
-                        }
-                        else
-                        {
-                            //row[top++] = 
-                        }
+                        tile = (tile > hold) ? tile : hold;
+                        row[top++] = ++tile;
+                        score += (fibonacci[tile]);
+                        hold = 0;
+                        //Console.WriteLine(string.Format("tile {0} {1}move to {2} {3}", 0, hold, 0, c));
                     }
+                    else
+                    {
+                        row[top++] = hold;
+                        hold = tile;
+                    }
+                    moved = true;
+                }
+                else
+                {
+                    hold = tile;
                 }
             }
-            return -1;
+            if (hold != 0)
+                row[top] = hold;
+
+            return moved;
+        }
+
+        public int MoveLeft()
+        {
+            int totalScore = 0;
+            bool isMoved = false;
+            for(int r = 0; r < ROW; r++)
+            {
+                //Tile[] row =
+                int[] row = new int[COL];
+                for (int i = 0; i < COL; i++)
+                {
+                    if (board[i, r] == null)
+                    {
+                        row[i] = 0;
+                    }
+                    else
+                    {
+                        row[i] = board[i, r].index;
+                    }
+                }
+                //List<int> row = new List<int> {
+                //    board[r, 0].index, board[r, 1].index, board[r, 2].index, board[r, 3].index
+                //};
+                bool moved = CombineLine(r * COL, r * COL + COL, row, out int rowScore);
+                totalScore += rowScore;
+                if (moved)
+                {
+                    isMoved = true;
+                }
+            }
+            return isMoved ? totalScore : -1;
         }
 
         int MoveUp()
