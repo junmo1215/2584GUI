@@ -7,11 +7,20 @@ using System.Windows.Controls;
 
 namespace _2584interface
 {
+    enum Direction
+    {
+        Up,
+        Down,
+        Left,
+        Right
+    }
+
     class Board
     {
         const int POSSIBLE_INDEX = 32;
         const int ROW = 4;
         const int COL = 4;
+        const int SIZE = 4;
         private Canvas canvas;
 
         readonly int[] fibonacci = {
@@ -23,6 +32,7 @@ namespace _2584interface
 
         public Tile[,] board;
         Random rnd = new Random();
+
 
         public Board(Canvas canvas)
         {
@@ -163,6 +173,11 @@ namespace _2584interface
             return result;
         }
 
+        //private void MoveTiles(Tile tile, int x, int y)
+        //{
+            
+        //}
+
         private void TileMoveTo(int begin, int end)
         {
             int begin_row = begin / ROW, begin_col = begin % COL;
@@ -244,130 +259,55 @@ namespace _2584interface
             while (tile.animationEnd == false) ;
         }
 
-        public int Move()
-        {
-            return 0;
-        }
-
-        public int MoveLeft()
+        public int Move(Direction direction)
         {
             int totalScore = 0;
             bool isMoved = false;
-            for(int r = 0; r < ROW; r++)
+            for (int i = 0; i < SIZE; i++)
             {
-                //Tile[] row =
-                int[] row = new int[COL];
-                for (int i = 0; i < COL; i++)
+                int[] row = new int[SIZE];
+                for (int j = 0; j < SIZE; j++)
                 {
-                    if (board[r, i] == null)
-                    {
-                        row[i] = 0;
-                    }
+                    Tile tmpTile;
+                    if (direction == Direction.Up)
+                        tmpTile = board[j, i];
+                    else if (direction == Direction.Down)
+                        tmpTile = board[SIZE - j - 1, i];
+                    else if (direction == Direction.Left)
+                        tmpTile = board[i, j];
+                    else if (direction == Direction.Right)
+                        tmpTile = board[i, SIZE - j - 1];
                     else
-                    {
-                        row[i] = board[r, i].index;
-                    }
-                }
-                //List<int> row = new List<int> {
-                //    board[r, 0].index, board[r, 1].index, board[r, 2].index, board[r, 3].index
-                //};
-                bool moved = CombineLine(r * COL, r * COL + COL, row, out int rowScore);
-                totalScore += rowScore;
-                if (moved)
-                {
-                    isMoved = true;
-                }
-            }
-            return isMoved ? totalScore : -1;
-        }
+                        throw new ArgumentException();
 
-        public int MoveUp()
-        {
-            int totalScore = 0;
-            bool isMoved = false;
-            for (int c = 0; c < COL; c++)
-            {
-                //Tile[] row =
-                int[] col = new int[ROW];
-                for (int i = 0; i < ROW; i++)
-                {
-                    if (board[i, c] == null)
-                    {
-                        col[i] = 0;
-                    }
-                    else
-                    {
-                        col[i] = board[i, c].index;
-                    }
+                    row[j] = tmpTile == null ? 0 : tmpTile.index;
                 }
-                //List<int> row = new List<int> {
-                //    board[r, 0].index, board[r, 1].index, board[r, 2].index, board[r, 3].index
-                //};
-                bool moved = CombineLine(c, c + ROW * COL, col, out int rowScore);
-                totalScore += rowScore;
-                if (moved)
-                {
-                    isMoved = true;
-                }
-            }
-            return isMoved ? totalScore : -1;
-        }
 
-        public int MoveDown()
-        {
-            int totalScore = 0;
-            bool isMoved = false;
-            for (int c = 0; c < COL; c++)
-            {
-                //Tile[] row =
-                int[] col = new int[ROW];
-                for (int i = 0; i < ROW; i++)
+                int begin, end;
+                if (direction == Direction.Up)
                 {
-                    if (board[i, c] == null)
-                    {
-                        col[ROW - i - 1] = 0;
-                    }
-                    else
-                    {
-                        col[ROW - i - 1] = board[i, c].index;
-                    }
+                    begin = i;
+                    end = i + SIZE * SIZE;
                 }
-                //List<int> row = new List<int> {
-                //    board[r, 0].index, board[r, 1].index, board[r, 2].index, board[r, 3].index
-                //};
-                bool moved = CombineLine(c + (ROW - 1) * COL, c - ROW, col, out int rowScore);
-                totalScore += rowScore;
-                if (moved)
+                else if (direction == Direction.Down)
                 {
-                    isMoved = true;
+                    begin = i + (SIZE - 1) * SIZE;
+                    end = i - SIZE;
                 }
-            }
-            return isMoved ? totalScore : -1;
-        }
+                else if (direction == Direction.Left)
+                {
+                    begin = i * SIZE;
+                    end = i * SIZE + SIZE;
+                }
+                else if (direction == Direction.Right)
+                {
+                    begin = (i + 1) * SIZE - 1;
+                    end = i * COL - 1;
+                }
+                else
+                    throw new ArgumentException();
 
-        public int MoveRight()
-        {
-            int totalScore = 0;
-            bool isMoved = false;
-            for (int r = 0; r < ROW; r++)
-            {
-                //Tile[] row =
-                int[] row = new int[COL];
-                for (int i = 0; i < COL; i++)
-                {
-                    if (board[r, i] == null)
-                    {
-                        row[COL - i - 1] = 0;
-                    }
-                    else
-                    {
-                        row[COL - i - 1] = board[r, i].index;
-                    }
-                }
-                //List<int> row = new List<int> {
-                //    board[r, 0].index, board[r, 1].index, board[r, 2].index, board[r, 3].index
-                //};
-                bool moved = CombineLine((r + 1) * COL - 1, (r + 1) * COL - COL - 1, row, out int rowScore);
+                bool moved = CombineLine(begin, end, row, out int rowScore);
                 totalScore += rowScore;
                 if (moved)
                 {

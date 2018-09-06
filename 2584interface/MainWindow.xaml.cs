@@ -52,23 +52,23 @@ namespace _2584interface
             if (e.Key == Key.Left)
             {
                 //tile.MoveTo(tile.X - 1, tile.Y);
-                if (b.MoveLeft() == -1)
+                if (b.Move(Direction.Left) == -1)
                     return;
             }
             else if (e.Key == Key.Right)
             {
                 //tile.MoveTo(tile.X + 1, tile.Y);
-                if (b.MoveRight() == -1)
+                if (b.Move(Direction.Right) == -1)
                     return;
             }
             else if (e.Key == Key.Down)
             {
-                if (b.MoveDown() == -1)
+                if (b.Move(Direction.Down) == -1)
                     return;
             }
             else if (e.Key == Key.Up)
             {
-                if (b.MoveUp() == -1)
+                if (b.Move(Direction.Up) == -1)
                     return;
             }
             int action = evil.ChooseAction(b);
