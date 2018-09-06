@@ -52,42 +52,50 @@ namespace _2584interface
             if (e.Key == Key.Left)
             {
                 //tile.MoveTo(tile.X - 1, tile.Y);
-                b.MoveLeft();
+                if (b.MoveLeft() == -1)
+                    return;
             }
             else if (e.Key == Key.Right)
             {
                 //tile.MoveTo(tile.X + 1, tile.Y);
+                if (b.MoveRight() == -1)
+                    return;
             }
             else if (e.Key == Key.Down)
             {
-                //tile.MoveTo(tile.X, tile.Y + 1);
+                if (b.MoveDown() == -1)
+                    return;
             }
             else if (e.Key == Key.Up)
             {
-                //tile.MoveTo(tile.X, tile.Y - 1);
+                if (b.MoveUp() == -1)
+                    return;
             }
+            int action = evil.ChooseAction(b);
+            b.TakeEvilAction(action);
         }
 
         private void mainCanvas_Loaded(object sender, RoutedEventArgs e)
         {
-            //int action = evil.ChooseAction(b);
-            //b.TakeEvilAction(action);
-            //action = evil.ChooseAction(b);
-            //b.TakeEvilAction(action);
-            b.TakeEvilAction(0);
-            b.TakeEvilAction(2);
+            int action = evil.ChooseAction(b);
+            b.TakeEvilAction(action);
+            action = evil.ChooseAction(b);
+            b.TakeEvilAction(action);
 
-            b.TakeEvilAction(5);
-            b.TakeEvilAction(6);
+            //b.TakeEvilAction(0);
+            //b.TakeEvilAction(2);
 
-            b.TakeEvilAction(8);
-            b.TakeEvilAction(9);
-            b.TakeEvilAction(10);
-            b.TakeEvilAction(11);
+            //b.TakeEvilAction(5);
+            //b.TakeEvilAction(6);
 
-            b.TakeEvilAction(13);
-            b.TakeEvilAction(14);
-            b.TakeEvilAction(15);
+            //b.TakeEvilAction(8);
+            //b.TakeEvilAction(9);
+            //b.TakeEvilAction(10);
+            //b.TakeEvilAction(11);
+
+            //b.TakeEvilAction(13);
+            //b.TakeEvilAction(14);
+            //b.TakeEvilAction(15);
         }
     }
 }

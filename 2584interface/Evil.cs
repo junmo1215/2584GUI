@@ -17,7 +17,19 @@ namespace _2584interface
 
         public int ChooseAction(Board b)
         {
-            return rnd.Next(0, 16);
+            List<int> availableIndex = new List<int>(16);
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    if (b.board[i, j] == null)
+                    {
+                        availableIndex.Add(i * 4 + j);
+                    }
+                }
+            }
+            int randIndex = rnd.Next(0, availableIndex.Count - 1);
+            return availableIndex[randIndex];
         }
 
     }
