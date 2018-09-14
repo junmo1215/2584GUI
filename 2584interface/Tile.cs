@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,34 @@ namespace _2584interface
 {
     class Tile
     {
+        public static readonly object locker = new object();
+        private static int _flag;
+        private static Board board;
+        private static Canvas canvas;
+
+        public static void SetBoardAndCanvas(Board board, Canvas canvas)
+        {
+            Tile.board = board;
+            Tile.canvas = canvas;
+        }
+
+        public static int Flag
+        {
+            set {
+                lock (locker)
+                {
+                    _flag = value;
+                }
+            }
+            get
+            {
+                lock (locker)
+                {
+                    return _flag;
+                }
+            }
+        }
+
         private int size = 100;
         public Tile(int row, int col, int index)
         {
@@ -35,7 +64,7 @@ namespace _2584interface
             Image img = new Image();
             BitmapImage b = new BitmapImage();
             b.BeginInit();
-            b.UriSource = new Uri(string.Format(@"D:\code\2584interface\2584interface\resource\{0}.png", index));
+            b.UriSource = new Uri(string.Format(@"resource\{0}.png", index), UriKind.Relative);
             b.EndInit();
             img.Source = b;
             img.Width = size;
@@ -56,12 +85,42 @@ namespace _2584interface
             animation2End = false;
         }
 
-        void EndAnimation()
+        void EndAnimation(int index, Hashtable actions)
         {
             if (animation1End && animation2End)
             {
                 animationEnd = true;
+                int bit = 1;
+                bit <<= index;
+                Flag &= ~bit;
             }
+
+            if (Flag != 0)
+                return;
+
+            
+            Tile tile;
+            List<Action> removeAction = actions["remove"] as List<Action>;
+            List<Action> newAction = actions["new"] as List<Action>;
+
+
+            foreach (Action action in removeAction)
+            {
+                tile = action.tile;
+                canvas.Children.Remove(tile.img);
+                //board[action.row, action.col] = null;
+            }
+
+            foreach (Action action in newAction)
+            {
+                tile = action.tile;
+                //board[action.row, action.col] = tile;
+                canvas.Children.Add(tile.img);
+            }
+            board.isMoving = false;
+
+
+
         }
 
         /// <summary>
@@ -69,19 +128,24 @@ namespace _2584interface
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public void MoveTo(int row, int col)
+        public void MoveTo(int row, int col, int i = -1, Hashtable actions = null)
         {
             BeginAnimation();
             int x = col;
             int y = row;
             TranslateTransform trans = new TranslateTransform();
             img.RenderTransform = trans;
-            double animationTime = 0.5;
+            double animationTime = 0.1;
             DoubleAnimation anim1 = new DoubleAnimation(size * X, size * x, TimeSpan.FromSeconds(animationTime));
             DoubleAnimation anim2 = new DoubleAnimation(size * Y, size * y, TimeSpan.FromSeconds(animationTime));
 
-            anim1.Completed += (sender, eArgs) => { animation1End = true; EndAnimation(); };
-            anim2.Completed += (sender, eArgs) => { animation2End = true; EndAnimation(); };
+            if (i != -1)
+            {
+                anim1.Completed += (sender, eArgs) => { animation1End = true; EndAnimation(i, actions); };
+                anim2.Completed += (sender, eArgs) => { animation2End = true; EndAnimation(i, actions); };
+            }
+                
+
 
             //DoubleAnimation anim1 = new DoubleAnimation(0, size * (x - X), TimeSpan.FromSeconds(1));
             //DoubleAnimation anim2 = new DoubleAnimation(0, size * (y - Y), TimeSpan.FromSeconds(1));
@@ -94,6 +158,8 @@ namespace _2584interface
             this.X = x;
             this.Y = y;
         }
+
+
 
         /// <summary>
         /// 显示在界面中

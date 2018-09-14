@@ -71,6 +71,7 @@ namespace _2584interface
                 if (b.Move(Direction.Up) == -1)
                     return;
             }
+
             int action = evil.ChooseAction(b);
             b.TakeEvilAction(action);
         }
