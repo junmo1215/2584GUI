@@ -383,7 +383,8 @@ namespace _2584interface
                 else
                     throw new ArgumentException();
 
-                actions = MergeActionsTable(CombineLine(begin, end, row, out int rowScore), actions);
+                int rowScore;
+                actions = MergeActionsTable(CombineLine(begin, end, row, out rowScore), actions);
                 totalScore += rowScore;
             }
             

@@ -64,7 +64,7 @@ namespace _2584interface
             Image img = new Image();
             BitmapImage b = new BitmapImage();
             b.BeginInit();
-            b.UriSource = new Uri(string.Format(@"resource\{0}.png", index), UriKind.Relative);
+            b.UriSource = new Uri(string.Format(@"resource\2584\{0}.png", index), UriKind.Relative);
             b.EndInit();
             img.Source = b;
             img.Width = size;
@@ -98,11 +98,9 @@ namespace _2584interface
             if (Flag != 0)
                 return;
 
-            
             Tile tile;
             List<Action> removeAction = actions["remove"] as List<Action>;
             List<Action> newAction = actions["new"] as List<Action>;
-
 
             foreach (Action action in removeAction)
             {

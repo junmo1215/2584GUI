@@ -112,5 +112,59 @@
     <Resource Include="resource\8.png" />
     <Resource Include="resource\9.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\board.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\2048\1.png" />
+    <Resource Include="resource\2048\10.png" />
+    <Resource Include="resource\2048\11.png" />
+    <Resource Include="resource\2048\12.png" />
+    <Resource Include="resource\2048\13.png" />
+    <Resource Include="resource\2048\14.png" />
+    <Resource Include="resource\2048\15.png" />
+    <Resource Include="resource\2048\16.png" />
+    <Resource Include="resource\2048\2.png" />
+    <Resource Include="resource\2048\3.png" />
+    <Resource Include="resource\2048\4.png" />
+    <Resource Include="resource\2048\5.png" />
+    <Resource Include="resource\2048\6.png" />
+    <Resource Include="resource\2048\7.png" />
+    <Resource Include="resource\2048\8.png" />
+    <Resource Include="resource\2048\9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\2584\1.png" />
+    <Resource Include="resource\2584\10.png" />
+    <Resource Include="resource\2584\11.png" />
+    <Resource Include="resource\2584\12.png" />
+    <Resource Include="resource\2584\13.png" />
+    <Resource Include="resource\2584\14.png" />
+    <Resource Include="resource\2584\15.png" />
+    <Resource Include="resource\2584\16.png" />
+    <Resource Include="resource\2584\17.png" />
+    <Resource Include="resource\2584\18.png" />
+    <Resource Include="resource\2584\19.png" />
+    <Resource Include="resource\2584\2.png" />
+    <Resource Include="resource\2584\20.png" />
+    <Resource Include="resource\2584\21.png" />
+    <Resource Include="resource\2584\22.png" />
+    <Resource Include="resource\2584\23.png" />
+    <Resource Include="resource\2584\24.png" />
+    <Resource Include="resource\2584\25.png" />
+    <Resource Include="resource\2584\26.png" />
+    <Resource Include="resource\2584\27.png" />
+    <Resource Include="resource\2584\28.png" />
+    <Resource Include="resource\2584\29.png" />
+    <Resource Include="resource\2584\3.png" />
+    <Resource Include="resource\2584\30.png" />
+    <Resource Include="resource\2584\31.png" />
+    <Resource Include="resource\2584\4.png" />
+    <Resource Include="resource\2584\5.png" />
+    <Resource Include="resource\2584\6.png" />
+    <Resource Include="resource\2584\7.png" />
+    <Resource Include="resource\2584\8.png" />
+    <Resource Include="resource\2584\9.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
