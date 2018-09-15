@@ -100,7 +100,10 @@ namespace _2584interface
 
         bool CanCombine(int tile, int hold)
         {
-            return (tile == 1 && hold == 1) || (tile - hold) == 1 || (tile - hold) == -1;
+            if (App.game == "2584")
+                return (tile == 1 && hold == 1) || (tile - hold) == 1 || (tile - hold) == -1;
+            else
+                return tile == hold;
         }
         
         /// <summary>

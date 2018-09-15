@@ -5,12 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:_2584interface"
         mc:Ignorable="d"
-        Title="2584" Height="500" Width="500" KeyDown="Window_KeyDown">
+        Title="2584" Height="680" Width="500" KeyDown="Window_KeyDown">
     <Grid x:Name="mainRect">
-        <Canvas x:Name="mainCanvas" HorizontalAlignment="Left" Height="400" Margin="50" VerticalAlignment="Top" Width="400" Panel.ZIndex="-3" Loaded="mainCanvas_Loaded">
+        <Canvas x:Name="mainCanvas" HorizontalAlignment="Center" Height="400" VerticalAlignment="Top" Width="400" Panel.ZIndex="-3" Loaded="mainCanvas_Loaded" Margin="46,200,46,0">
             <Canvas.Background>
                 <ImageBrush ImageSource="resource/board.png" Stretch="Fill"/>
             </Canvas.Background>
         </Canvas>
+        <Label x:Name="gameName" Content="2584" HorizontalAlignment="Left" Height="111" Margin="46,19,0,0" VerticalAlignment="Top" Width="202" FontWeight="Bold" FontFamily="Arial" Background="#00000000" Foreground="#FF776E65" FontSize="80"/>
+        <Canvas HorizontalAlignment="Left" Height="79" Margin="291,19,0,0" VerticalAlignment="Top" Width="155" Background="#FFBBADA0">
+            <Label x:Name="score" Content="000000" Foreground="White" FontFamily="Arial" FontSize="25" Canvas.Top="36" Width="159" HorizontalContentAlignment="Center" Height="36" Margin="0" Padding="5,8,5,5" FontWeight="Bold"/>
+            <Label x:Name="label2" Content="score" Height="36" Width="159" Foreground="White" HorizontalContentAlignment="Center" FontSize="25" Padding="5,5,5,0" FontFamily="Arial" UseLayoutRounding="True" FontWeight="Bold" IsEnabled="False"/>
+        </Canvas>
+        <Label x:Name="tip" Content="Join the numbers and get to the 2584 tile!" HorizontalAlignment="Left" Height="36" Margin="48,135,0,0" VerticalAlignment="Top" Width="398" Foreground="#FF776E65" FontFamily="Arial" FontSize="14" IsEnabled="False"/>
+        <Button x:Name="button" Content="Play again" HorizontalAlignment="Left" Height="36" Margin="342,135,0,0" VerticalAlignment="Top" Width="104" FontFamily="Arial" FontWeight="Bold" Background="#FF8F7A66" Foreground="#FFF9F6F2" FontSize="16" BorderThickness="0">
+        </Button>
     </Grid>
 </Window>

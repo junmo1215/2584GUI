@@ -13,5 +13,6 @@ namespace _2584interface
     /// </summary>
     public partial class App : Application
     {
+        public static string game = ConfigurationManager.AppSettings["game"] ?? "2048";
     }
 }

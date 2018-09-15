@@ -26,9 +26,6 @@ namespace _2584interface
         public MainWindow()
         {
             InitializeComponent();
-            b = new Board(mainCanvas);
-            evil = new Evil();
-            player = new Player();
         }
         
         //Tile tile;
@@ -78,6 +75,15 @@ namespace _2584interface
 
         private void mainCanvas_Loaded(object sender, RoutedEventArgs e)
         {
+            b = new Board(mainCanvas);
+            evil = new Evil();
+            player = new Player();
+
+            // 界面相关字段赋初始值
+            gameName.Content = App.game;
+            score.Content = 0;
+            tip.Content = string.Format("Join the numbers and get to the {0} tile!", App.game);
+
             int action = evil.ChooseAction(b);
             b.TakeEvilAction(action);
             action = evil.ChooseAction(b);

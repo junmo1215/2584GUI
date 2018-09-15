@@ -64,7 +64,7 @@ namespace _2584interface
             Image img = new Image();
             BitmapImage b = new BitmapImage();
             b.BeginInit();
-            b.UriSource = new Uri(string.Format(@"resource\2584\{0}.png", index), UriKind.Relative);
+            b.UriSource = new Uri(string.Format(@"resource\{0}\{1}.png", App.game, index), UriKind.Relative);
             b.EndInit();
             img.Source = b;
             img.Width = size;
