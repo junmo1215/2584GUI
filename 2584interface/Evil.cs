@@ -8,7 +8,7 @@ namespace _2584interface
 {
     class Evil
     {
-        private Random rnd = new Random(0);
+        private Random rnd = new Random();
 
         public Evil()
         {

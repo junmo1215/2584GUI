@@ -52,9 +52,6 @@ namespace _2584interface
             this.Y = row;
 
             Image img = GetImage(index);
-            //Canvas.SetTop(img, Y * size);
-            //Canvas.SetLeft(img, X * size);
-            //img.RenderTransform = new TranslateTransform(X * 100, positionY * 100);
             this.img = img;
             MoveTo(Y, X);
         }
@@ -115,10 +112,9 @@ namespace _2584interface
                 //board[action.row, action.col] = tile;
                 canvas.Children.Add(tile.img);
             }
+            
+            MainWindow.OnAnimationEnd();
             board.isMoving = false;
-
-
-
         }
 
         /// <summary>
@@ -142,43 +138,12 @@ namespace _2584interface
                 anim1.Completed += (sender, eArgs) => { animation1End = true; EndAnimation(i, actions); };
                 anim2.Completed += (sender, eArgs) => { animation2End = true; EndAnimation(i, actions); };
             }
-                
 
-
-            //DoubleAnimation anim1 = new DoubleAnimation(0, size * (x - X), TimeSpan.FromSeconds(1));
-            //DoubleAnimation anim2 = new DoubleAnimation(0, size * (y - Y), TimeSpan.FromSeconds(1));
             trans.BeginAnimation(TranslateTransform.XProperty, anim1);
             trans.BeginAnimation(TranslateTransform.YProperty, anim2);
 
-            //img.BeginAnimation(TranslateTransform.XProperty, anim1);
-            //img.BeginAnimation(TranslateTransform.YProperty, anim2);
-
             this.X = x;
             this.Y = y;
-        }
-
-
-
-        /// <summary>
-        /// 显示在界面中
-        /// </summary>
-        public void Show()
-        {
-
-        }
-
-        public void Remove()
-        {
-            
-        }
-
-        /// <summary>
-        /// if can combine, move to the position and create a new tile
-        /// </summary>
-        /// <param name="tile">target tile</param>
-        public void MoveTo(Tile tile)
-        {
-            MoveTo(tile.X, tile.Y);
         }
 
         public override string ToString()

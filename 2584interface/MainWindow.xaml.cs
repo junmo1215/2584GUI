@@ -20,89 +20,93 @@ namespace _2584interface
     /// </summary>
     public partial class MainWindow : Window
     {
-        Board b;
-        Evil evil;
-        Player player;
+        static Board b;
+        static Evil evil;
+        static Player player;
+        //int _totalScore;
+        int totalScore
+        {
+            set
+            {
+                score.Content = value;
+            }
+            get
+            {
+                return (int)score.Content;
+            }
+        }
         public MainWindow()
         {
             InitializeComponent();
         }
-        
-        //Tile tile;
-        //private void Canvas_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    //< Image HorizontalAlignment = "Left" Height = "100" VerticalAlignment = "Top" Width = "100" Canvas.Left = "0" Canvas.Top = "0" />
-        //    tile = new Tile(0, 0, 2);
-        //    mainCanvas.Children.Add(tile.img);
-        //    //Image img = new Image();
-        //    //BitmapImage b = new BitmapImage();
-        //    //b.BeginInit();
-        //    //b.UriSource = new Uri(@"D:\code\2584interface\2584interface\resource\th.jpg");
-        //    //b.EndInit();
-        //    //img.Source = b;
-        //    //img.Visibility = Visibility.Visible;
-        //    //mainCanvas.Children.Add(img);
-        //}
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
+            if (b.isMoving)
+                return;
+
+            int stepScore = 0;
             if (e.Key == Key.Left)
             {
-                //tile.MoveTo(tile.X - 1, tile.Y);
-                if (b.Move(Direction.Left) == -1)
-                    return;
+                stepScore = b.Move(Direction.Left);
             }
             else if (e.Key == Key.Right)
             {
-                //tile.MoveTo(tile.X + 1, tile.Y);
-                if (b.Move(Direction.Right) == -1)
-                    return;
+                stepScore = b.Move(Direction.Right);
             }
             else if (e.Key == Key.Down)
             {
-                if (b.Move(Direction.Down) == -1)
-                    return;
+                stepScore = b.Move(Direction.Down);
             }
             else if (e.Key == Key.Up)
             {
-                if (b.Move(Direction.Up) == -1)
-                    return;
+                stepScore = b.Move(Direction.Up);
             }
 
+            // 这一步没有动作
+            if (stepScore == -1)
+                return;
+
+            totalScore += stepScore;
+        }
+
+        /// <summary>
+        /// 动画执行结束之后的操作
+        /// </summary>
+        public static void OnAnimationEnd()
+        {
             int action = evil.ChooseAction(b);
             b.TakeEvilAction(action);
         }
 
-        private void mainCanvas_Loaded(object sender, RoutedEventArgs e)
+        private void newGame()
         {
+            mainCanvas.Children.Clear();
             b = new Board(mainCanvas);
             evil = new Evil();
             player = new Player();
 
             // 界面相关字段赋初始值
             gameName.Content = App.game;
-            score.Content = 0;
+            this.Title = App.game;
+            totalScore = 0;
+            //score.Content = totalScore;
             tip.Content = string.Format("Join the numbers and get to the {0} tile!", App.game);
 
             int action = evil.ChooseAction(b);
             b.TakeEvilAction(action);
             action = evil.ChooseAction(b);
             b.TakeEvilAction(action);
+        }
 
-            //b.TakeEvilAction(0);
-            //b.TakeEvilAction(2);
+        private void mainCanvas_Loaded(object sender, RoutedEventArgs e)
+        {
+            newGame();
+        }
 
-            //b.TakeEvilAction(5);
-            //b.TakeEvilAction(6);
-
-            //b.TakeEvilAction(8);
-            //b.TakeEvilAction(9);
-            //b.TakeEvilAction(10);
-            //b.TakeEvilAction(11);
-
-            //b.TakeEvilAction(13);
-            //b.TakeEvilAction(14);
-            //b.TakeEvilAction(15);
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            newGame();
         }
     }
 }

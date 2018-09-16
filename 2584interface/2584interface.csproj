@@ -151,5 +151,8 @@
     <Resource Include="resource\2584\8.png" />
     <Resource Include="resource\2584\9.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\favicon.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

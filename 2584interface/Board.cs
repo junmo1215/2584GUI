@@ -33,10 +33,10 @@ namespace _2584interface
     class Board
     {
         const int POSSIBLE_INDEX = 32;
-        const int ROW = 4;
-        const int COL = 4;
         const int SIZE = 4;
         private Canvas canvas;
+
+        // 记录动画是否结束
         public bool isMoving = false;
 
         readonly int[] fibonacci = {
@@ -49,14 +49,19 @@ namespace _2584interface
         public Tile[,] board;
         Random rnd = new Random();
 
-
+        /// <summary>
+        /// 初始化board，记录盘面的信息和动画相关内容
+        /// 盘面信息是一个 4 * 4的数组
+        /// 如果某个位置没有内容，则填null
+        /// </summary>
+        /// <param name="canvas"></param>
         public Board(Canvas canvas)
         {
             this.canvas = canvas;
-            board = new Tile[ROW, COL];
-            for (int i = 0; i < ROW; i++)
+            board = new Tile[SIZE, SIZE];
+            for (int i = 0; i < SIZE; i++)
             {
-                for (int j = 0; j < COL; j++)
+                for (int j = 0; j < SIZE; j++)
                 {
                     board[i, j] = null;
                 }
@@ -64,15 +69,22 @@ namespace _2584interface
             Tile.SetBoardAndCanvas(this, canvas);
         }
 
+        /// <summary>
+        /// 在指定位置生成tile
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
         public int TakeEvilAction(int action)
         {
-            if (action == -1 || action >= ROW * COL)
+            if (action == -1 || action >= SIZE * SIZE)
                 throw new ArgumentOutOfRangeException("action", "action can't be -1");
             
             int row = action / 4;
             int col = action % 4;
             if (board[row, col] != null)
                 throw new Exception("can't move");
+
+            // 设置生成的概率
             if (rnd.Next(0, 100) > 75)
                 board[row, col] = new Tile(row, col, 2);
             else
@@ -81,23 +93,12 @@ namespace _2584interface
             return 0;
         }
 
-        //public int TakePlayerAction(int action)
-        //{
-        //    switch (action)
-        //    {
-        //        case 0:
-        //            return MoveUp();
-        //        case 1:
-        //            return MoveDown();
-        //        case 2:
-        //            return MoveLeft();
-        //        case 3:
-        //            return MoveRight();
-        //        default:
-        //            throw new ArgumentOutOfRangeException("action");
-        //    }
-        //}
-
+        /// <summary>
+        /// 根据tile上的数字判断能否合并
+        /// </summary>
+        /// <param name="tile"></param>
+        /// <param name="hold"></param>
+        /// <returns></returns>
         bool CanCombine(int tile, int hold)
         {
             if (App.game == "2584")
@@ -137,15 +138,24 @@ namespace _2584interface
             return oldActions;
         }
 
+        /// <summary>
+        /// 合并某一条直线上的tile
+        /// </summary>
+        /// <param name="begin">起始位置，这个点在直线上</param>
+        /// <param name="end">终点位置，这个点不包含在直线上</param>
+        /// <param name="row">tile对应的index数组</param>
+        /// <param name="score">这次合并产生的分数</param>
+        /// <returns></returns>
         Hashtable CombineLine(int begin, int end, int[] row, out int score)
         {
+            // 记录各种动画
             Hashtable actions = new Hashtable();
+
             int top = 0, hold = 0;
             int hold_position = 0;
             score = 0;
-            //bool moved = false;
             int tile_index, top_index, hold_index;
-            for (int c = 0; c < COL; c++)
+            for (int c = 0; c < SIZE; c++)
             {
                 int tile = row[c];
                 if (tile == 0) continue;
@@ -156,13 +166,16 @@ namespace _2584interface
                     {
                         tile_index = PositionToIndex(begin, end, c);
                         top_index = PositionToIndex(begin, end, top);
-                        //Console.WriteLine(string.Format("tile {0} {1}move to {2} {3}", 0, hold, 0, c));
                         actions = MergeActionsTable(TileMoveTo(tile_index, top_index), actions);
                         tile = (tile > hold) ? tile : hold;
                         row[top++] = ++tile;
-                        score += (fibonacci[tile]);
+
+                        // 2048和2584算分方式不同
+                        if (App.game == "2584")
+                            score += (fibonacci[tile]);
+                        else
+                            score += (1 << tile);
                         hold = 0;
-                        //moved = true;
                     }
                     else
                     {
@@ -188,7 +201,6 @@ namespace _2584interface
                     tile_index = PositionToIndex(begin, end, hold_position);
                     top_index = PositionToIndex(begin, end, top);
                     actions = MergeActionsTable(TileMoveTo(tile_index, top_index), actions);
-                    //moved = true;
                 }
 
                 row[top] = hold;
@@ -213,11 +225,19 @@ namespace _2584interface
             return result;
         }
 
-        //private void MoveTiles(Tile tile, int x, int y)
-        //{
-            
-        //}
-
+        /// <summary>
+        /// 根据盘面上合并这一步的信息，记录需要执行的动画
+        /// 执行的动画分为三个部分：
+        ///     1. 移动 moveAction，将tile从一个位置移动到另一个位置
+        ///     2. 移除 removeAction，从画布中拿掉tile
+        ///     3. 新增 newAction，在画布指定位置新增tile
+        /// 
+        /// 移动过程中，如果路线有其他的tile，需要把相关的tile都清理掉
+        /// 移动结束后在终点产生一个新的tile
+        /// </summary>
+        /// <param name="begin"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         private Hashtable TileMoveTo(int begin, int end)
         {
             //HashTable<string, List<Action>> actions = new HashSet<>
@@ -226,14 +246,14 @@ namespace _2584interface
             List<Action> removeAction = new List<Action>();
             List<Action> newAction = new List<Action>();
             
-            int begin_row = begin / ROW, begin_col = begin % COL;
-            int end_row = end / ROW, end_col = end % COL;
+            int begin_row = begin / SIZE, begin_col = begin % SIZE;
+            int end_row = end / SIZE, end_col = end % SIZE;
 
             Tile beginTile = board[begin_row, begin_col];
             //beginTile.MoveTo(end_row, end_col);
             moveAction.Add(new Action(beginTile, end_row, end_col));
-            
 
+            // 用来找路径中的下一个位置
             int step_col = GetStep(begin_col, end_col);
             int step_row = GetStep(begin_row, end_row);
 
@@ -242,6 +262,7 @@ namespace _2584interface
             if (begin_row == end_row)
                 step_row = 0;
 
+            // 遍历经过的点，查看路线中是否有其他的tile
             List<int> numInPath = new List<int>(2);
             for (int i = end_row, j = end_col; i != begin_row || j != begin_col; i -= step_row, j -= step_col)
             {
@@ -249,11 +270,7 @@ namespace _2584interface
                 if (tmpTile == null) continue;
 
                 numInPath.Add(tmpTile.index);
-                //tmpTile.Remove();
-                //var img = tmpTile.img;
-                //WaitForAnimation(tmpTile);
 
-                //canvas.Children.Remove(tmpTile.img);
                 board[i, j] = null;
                 moveAction.Add(new Action(tmpTile, end_row, end_col));
                 removeAction.Add(new Action(tmpTile, end_row, end_col));
@@ -262,49 +279,33 @@ namespace _2584interface
             int new_index;
             if (numInPath.Count == 0)
             {
+                // 没有其他tile，只需要把自身移动到终点位置
                 board[begin_row, begin_col] = null;
                 board[end_row, end_col] = beginTile;
             }
             else if (numInPath.Count == 1)
             {
+                // 路线上有其他tile，在CombineLine函数中能保证这个tile是能够跟当前tile合并的
+                // 直接将两个tile都执行移动到终点的动画，然后清理掉这两个旧的tile，产生一个新的
+
+                // 新tile的index
                 new_index = numInPath[0];
                 if (new_index <= beginTile.index)
                     new_index = beginTile.index;
                 new_index++;
 
-                // 采取先删掉再增加一个的方式
-                //System.Threading.Thread.Sleep(100);
-                //WaitForAnimation(beginTile);
-                //while (beginTile.animationEnd == false)
-                //{
-                //    System.Threading.Thread.Sleep(100);
-                //}
-                //canvas.Children.Remove(beginTile.img);
                 board[begin_row, begin_col] = null;
                 removeAction.Add(new Action(beginTile, begin_row, begin_col));
 
                 Tile new_tile = new Tile(end_row, end_col, new_index);
 
                 board[end_row, end_col] = new_tile;
-                //canvas.Children.Add(new_tile.img);
                 newAction.Add(new Action(new_tile, end_row, end_col));
-
-                //canvas.Children.Remove(beginTile.img);
-                //beginTile.SetImage(new_index);
-                //board[begin_row, begin_col] = null;
-                //board[end_row, end_col] = beginTile;
-                //canvas.Children.Add(beginTile.img);
-
-
             }
             else
             {
                 throw new Exception("count of tile in one move path can't greater then 1");
             }
-
-            //Tile new_tile = new Tile(end_col, end_row, new_index);
-            //board[end_col, end_row] = new_tile;
-            //canvas.Children.Add(new_tile.img);
 
             actions.Add("move", moveAction);
             actions.Add("new", newAction);
@@ -313,11 +314,10 @@ namespace _2584interface
             return actions;
         }
 
-        void WaitForAnimation(Tile tile)
-        {
-            while (tile.animationEnd == false) ;
-        }
-
+        /// <summary>
+        /// 返回board上index的数组
+        /// </summary>
+        /// <returns></returns>
         private int[,] BoardValue()
         {
             int[,] result = new int[SIZE, SIZE];
@@ -334,6 +334,11 @@ namespace _2584interface
             return result;
         }
 
+        /// <summary>
+        /// 执行移动指令
+        /// </summary>
+        /// <param name="direction">需要移动的方向</param>
+        /// <returns>本次移动的得分，-1表示无法移动</returns>
         public int Move(Direction direction)
         {
             isMoving = true;
@@ -362,6 +367,7 @@ namespace _2584interface
                     row[j] = tmpTile == null ? 0 : tmpTile.index;
                 }
 
+                // 设置每条直线的起点和终点
                 int begin, end;
                 if (direction == Direction.Up)
                 {
@@ -381,7 +387,7 @@ namespace _2584interface
                 else if (direction == Direction.Right)
                 {
                     begin = (i + 1) * SIZE - 1;
-                    end = i * COL - 1;
+                    end = i * SIZE - 1;
                 }
                 else
                     throw new ArgumentException();
@@ -406,6 +412,10 @@ namespace _2584interface
             return isMoved ? totalScore : -1;
         }
 
+        /// <summary>
+        /// 开始执行动画
+        /// </summary>
+        /// <param name="actions"></param>
         void PlayActions(Hashtable actions)
         {
             List<Action> moveAction = actions["move"] as List<Action>;
@@ -414,15 +424,13 @@ namespace _2584interface
                 return;
 
             int length = moveAction.Count;
-            //int flag = 1;
+
             // flag所有位都为1
             Tile.Flag = 1;
             for (int i = 0; i < length - 1; i++)
             {
                 Tile.Flag <<= 1;
                 Tile.Flag += 1;
-                //flag <<= 1;
-                //flag += 1;
             }
 
             Action action;
@@ -430,7 +438,6 @@ namespace _2584interface
             {
                 action = moveAction[i];
                 action.tile.MoveTo(action.row, action.col, i, actions);
-                
             }
 
         }
@@ -438,9 +445,9 @@ namespace _2584interface
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < ROW; i++)
+            for (int i = 0; i < SIZE; i++)
             {
-                for(int j = 0; j < COL; j++)
+                for(int j = 0; j < SIZE; j++)
                 {
                     sb.Append(board[i, j].index + ", ");
                 }
