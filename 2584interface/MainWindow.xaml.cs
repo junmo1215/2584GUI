@@ -37,6 +37,7 @@ namespace _2584interface
         }
         public MainWindow()
         {
+            Communicate.Config();
             InitializeComponent();
         }
 
@@ -45,7 +46,15 @@ namespace _2584interface
             if (b.isMoving)
                 return;
 
-            int stepScore = 0;
+            int stepScore = -1;
+            if (e.Key == Key.Q)
+            {
+                Direction direction = player.ChooseAction(b);
+                if (direction == Direction.Null)
+                    return;
+                stepScore = b.Move(direction);
+            }
+
             if (e.Key == Key.Left)
             {
                 stepScore = b.Move(Direction.Left);

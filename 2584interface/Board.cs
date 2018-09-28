@@ -10,6 +10,7 @@ namespace _2584interface
 {
     enum Direction
     {
+        Null,
         Up,
         Down,
         Left,

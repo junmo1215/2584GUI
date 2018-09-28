@@ -13,9 +13,16 @@ namespace _2584interface
 
         }
 
-        public int ChooseAction(Board b)
+        /// <summary>
+        /// 向配置的服务器发送当前盘面信息
+        /// 获取选择的步骤
+        /// </summary>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public Direction ChooseAction(Board b)
         {
-            return -1;
+
+            return Direction.Null;
         }
     }
 }
