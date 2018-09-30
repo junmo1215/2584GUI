@@ -55,6 +55,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Board.cs" />
+    <Compile Include="Communicate.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Evil.cs" />
     <Compile Include="Tile.cs" />

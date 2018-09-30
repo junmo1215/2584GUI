@@ -37,7 +37,7 @@ namespace _2584interface
         }
         public MainWindow()
         {
-            Communicate.Config();
+            //Communicate.Config();
             InitializeComponent();
         }
 
@@ -74,7 +74,10 @@ namespace _2584interface
 
             // 这一步没有动作
             if (stepScore == -1)
+            {
+                b.isMoving = false;
                 return;
+            }
 
             totalScore += stepScore;
         }

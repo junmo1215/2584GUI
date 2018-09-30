@@ -182,7 +182,8 @@ namespace _2584interface
                     {
                         hold_index = PositionToIndex(begin, end, hold_position);
                         top_index = PositionToIndex(begin, end, top);
-                        actions = MergeActionsTable(TileMoveTo(hold_index, top_index), actions);
+                        if (hold_index != top_index)
+                            actions = MergeActionsTable(TileMoveTo(hold_index, top_index), actions);
 
                         row[top++] = hold;
                         hold = tile;
