@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace _2584interface
 {
@@ -39,6 +40,8 @@ namespace _2584interface
         {
             //Communicate.Config();
             InitializeComponent();
+
+            StartCloseTimer();
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -119,6 +122,31 @@ namespace _2584interface
         private void button_Click(object sender, RoutedEventArgs e)
         {
             newGame();
+        }
+
+        // 开始防沉迷系统计时器
+        private void StartCloseTimer()
+        {
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(10);
+            timer.Tick += check_close;
+            timer.Start();
+        }
+
+        /// <summary>
+        /// 每十秒钟检测下当前时间是否在禁止游完时间中
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void check_close(object sender, EventArgs e)
+        {
+            DateTime start_date = DateTime.Parse(App.start_time, System.Globalization.CultureInfo.CurrentCulture);
+            DateTime end_date = DateTime.Parse(App.end_time, System.Globalization.CultureInfo.CurrentCulture);
+
+            if (DateTime.Now < end_date && DateTime.Now > start_date)
+            {
+                Application.Current.Shutdown();
+            }
         }
     }
 }
