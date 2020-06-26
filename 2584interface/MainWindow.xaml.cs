@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +26,7 @@ namespace _2584interface
         static Board b;
         static Evil evil;
         static Player player;
+        int today_game_time;
         //int _totalScore;
         int totalScore
         {
@@ -36,12 +39,41 @@ namespace _2584interface
                 return (int)score.Content;
             }
         }
+
         public MainWindow()
         {
             //Communicate.Config();
             InitializeComponent();
 
+            InitializeDB();
+            ReadGameTime();
             StartCloseTimer();
+        }
+
+        // 初始化数据库
+        private void InitializeDB()
+        {
+            if (File.Exists(App.db_path) == false)
+            {
+                using (var conn = new SQLiteConnection(App.db_cs))
+                {
+                    conn.Open();
+                    string sql = "CREATE TABLE game_time (date varchar(20), time int)";
+                    SQLiteCommand command = new SQLiteCommand(sql, conn);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        // 读取今日游戏时长
+        private void ReadGameTime()
+        {
+            using (var conn = new SQLiteConnection(App.db_cs))
+            {
+                conn.Open();
+                var cmd = new SQLiteCommand("SELECT time FROM game_time WHERE date = '{}'", conn);
+                SQLiteDataReader reader = cmd.ExecuteReader();
+            }
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -134,7 +166,7 @@ namespace _2584interface
         }
 
         /// <summary>
-        /// 每十秒钟检测下当前时间是否在禁止游完时间中
+        /// 每十秒钟检测下当前时间是否在禁止游玩时间中
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
