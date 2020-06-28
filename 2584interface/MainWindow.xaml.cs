@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
@@ -58,7 +59,7 @@ namespace _2584interface
                 using (var conn = new SQLiteConnection(App.db_cs))
                 {
                     conn.Open();
-                    string sql = "CREATE TABLE game_time (date varchar(20), time int)";
+                    string sql = "CREATE TABLE aa_game_time (date TEXT, time INTEGER)";
                     SQLiteCommand command = new SQLiteCommand(sql, conn);
                     command.ExecuteNonQuery();
                 }
@@ -71,8 +72,34 @@ namespace _2584interface
             using (var conn = new SQLiteConnection(App.db_cs))
             {
                 conn.Open();
-                var cmd = new SQLiteCommand("SELECT time FROM game_time WHERE date = '{}'", conn);
-                SQLiteDataReader reader = cmd.ExecuteReader();
+                var cmd = new SQLiteCommand(string.Format("SELECT time FROM aa_game_time WHERE date = '{0}'", DateTime.Today), conn);
+                DataTable dt = new DataTable();
+                using (SQLiteDataAdapter da = new SQLiteDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+
+                if (dt.Rows.Count == 0)
+                {
+                    string sql = string.Format("INSERT INTO aa_game_time('date', 'time') VALUES ('{0}', 0)", DateTime.Today);
+                    SQLiteCommand command = new SQLiteCommand(sql, conn);
+                    command.ExecuteNonQuery();
+                    today_game_time = 0;
+                }
+                else
+                {
+                    today_game_time = Convert.ToInt32(dt.Rows[0]["time"]);
+                }
+            }
+        }
+
+        private void UpdateGameTime()
+        {
+            using (var conn = new SQLiteConnection(App.db_cs))
+            {
+                conn.Open();
+                var cmd = new SQLiteCommand(string.Format("UPDATE aa_game_time SET time = {0} WHERE date = '{1}'", today_game_time, DateTime.Today), conn);
+                cmd.ExecuteNonQuery();
             }
         }
 
@@ -126,8 +153,20 @@ namespace _2584interface
             b.TakeEvilAction(action);
         }
 
+        private void exit_with_msg(string str)
+        {
+            MessageBox.Show(this, str);
+            Application.Current.Shutdown();
+        }
+
         private void newGame()
         {
+            if (today_game_time > 3600)
+            {
+                exit_with_msg("今天游戏时长已经超过");
+                return;
+            }
+
             mainCanvas.Children.Clear();
             b = new Board(mainCanvas);
             evil = new Evil();
@@ -161,7 +200,7 @@ namespace _2584interface
         {
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(10);
-            timer.Tick += check_close;
+            timer.Tick += clock_tick_callback;
             timer.Start();
         }
 
@@ -170,15 +209,19 @@ namespace _2584interface
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void check_close(object sender, EventArgs e)
+        private void clock_tick_callback(object sender, EventArgs e)
         {
+            // 检测游戏时间
             DateTime start_date = DateTime.Parse(App.start_time, System.Globalization.CultureInfo.CurrentCulture);
             DateTime end_date = DateTime.Parse(App.end_time, System.Globalization.CultureInfo.CurrentCulture);
 
             if (DateTime.Now < end_date && DateTime.Now > start_date)
             {
-                Application.Current.Shutdown();
+                exit_with_msg("不要玩游戏啦，回去睡觉");
             }
+
+            today_game_time += 10;
+            UpdateGameTime();
         }
     }
 }
