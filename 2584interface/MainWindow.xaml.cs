@@ -27,7 +27,17 @@ namespace _2584interface
         static Board b;
         static Evil evil;
         static Player player;
-        int today_game_time;
+        int today_game_time
+        {
+            set
+            {
+                game_time.Content = value;
+            }
+            get
+            {
+                return (int)game_time.Content;
+            }
+        }
         //int _totalScore;
         int totalScore
         {
@@ -163,7 +173,7 @@ namespace _2584interface
         {
             if (today_game_time > 3600)
             {
-                exit_with_msg("今天游戏时长已经超过");
+                exit_with_msg("今天游戏时长已经超过一小时啦！");
                 return;
             }
 
@@ -199,7 +209,7 @@ namespace _2584interface
         private void StartCloseTimer()
         {
             DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(10);
+            timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += clock_tick_callback;
             timer.Start();
         }
@@ -211,17 +221,23 @@ namespace _2584interface
         /// <param name="e"></param>
         private void clock_tick_callback(object sender, EventArgs e)
         {
-            // 检测游戏时间
-            DateTime start_date = DateTime.Parse(App.start_time, System.Globalization.CultureInfo.CurrentCulture);
-            DateTime end_date = DateTime.Parse(App.end_time, System.Globalization.CultureInfo.CurrentCulture);
-
-            if (DateTime.Now < end_date && DateTime.Now > start_date)
+            if (today_game_time % 10 == 0)
             {
-                exit_with_msg("不要玩游戏啦，回去睡觉");
+                // 检测游戏时间
+                DateTime start_date = DateTime.Parse(App.start_time, System.Globalization.CultureInfo.CurrentCulture);
+                DateTime end_date = DateTime.Parse(App.end_time, System.Globalization.CultureInfo.CurrentCulture);
+
+                if (DateTime.Now < end_date && DateTime.Now > start_date)
+                {
+                    exit_with_msg("不要玩游戏啦，快去睡觉");
+                }
             }
 
-            today_game_time += 10;
-            UpdateGameTime();
+            today_game_time += 1;
+            if (today_game_time % 10 == 0)
+            {
+                UpdateGameTime();
+            }
         }
     }
 }
