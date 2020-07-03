@@ -27,7 +27,8 @@ namespace _2584interface
         static Board b;
         static Evil evil;
         static Player player;
-        int today_game_time
+        bool g_is_disable_game_time = false;
+        int g_today_game_time
         {
             set
             {
@@ -39,7 +40,7 @@ namespace _2584interface
             }
         }
         //int _totalScore;
-        int totalScore
+        int g_totalScore
         {
             set
             {
@@ -59,6 +60,7 @@ namespace _2584interface
             InitializeDB();
             ReadGameTime();
             StartCloseTimer();
+            CheckCurrentTime();
 
             newGame();
         }
@@ -96,11 +98,11 @@ namespace _2584interface
                     string sql = string.Format("INSERT INTO aa_game_time('date', 'time') VALUES ('{0}', 0)", DateTime.Today);
                     SQLiteCommand command = new SQLiteCommand(sql, conn);
                     command.ExecuteNonQuery();
-                    today_game_time = 0;
+                    g_today_game_time = 0;
                 }
                 else
                 {
-                    today_game_time = Convert.ToInt32(dt.Rows[0]["time"]);
+                    g_today_game_time = Convert.ToInt32(dt.Rows[0]["time"]);
                 }
             }
         }
@@ -110,7 +112,7 @@ namespace _2584interface
             using (var conn = new SQLiteConnection(App.db_cs))
             {
                 conn.Open();
-                var cmd = new SQLiteCommand(string.Format("UPDATE aa_game_time SET time = {0} WHERE date = '{1}'", today_game_time, DateTime.Today), conn);
+                var cmd = new SQLiteCommand(string.Format("UPDATE aa_game_time SET time = {0} WHERE date = '{1}'", g_today_game_time, DateTime.Today), conn);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -153,7 +155,7 @@ namespace _2584interface
                 return;
             }
 
-            totalScore += stepScore;
+            g_totalScore += stepScore;
         }
 
         /// <summary>
@@ -173,9 +175,15 @@ namespace _2584interface
 
         private void newGame()
         {
-            if (today_game_time > 3600)
+            if (g_today_game_time > 3600)
             {
                 exit_with_msg("今天游戏时长已经超过一小时啦，不允许再玩啦！");
+                return;
+            }
+
+            if (g_is_disable_game_time)
+            {
+                exit_with_msg("不要玩游戏啦，快去睡觉");
                 return;
             }
 
@@ -187,7 +195,7 @@ namespace _2584interface
             // 界面相关字段赋初始值
             gameName.Content = App.game;
             this.Title = App.game;
-            totalScore = 0;
+            g_totalScore = 0;
             //score.Content = totalScore;
             tip.Content = string.Format("Join the numbers and get to the {0} tile!", App.game);
 
@@ -218,22 +226,27 @@ namespace _2584interface
         /// <param name="e"></param>
         private void clock_tick_callback(object sender, EventArgs e)
         {
-            if (today_game_time % 10 == 0)
+            if (g_today_game_time % 10 == 0)
             {
-                // 检测游戏时间
-                DateTime start_date = DateTime.Parse(App.start_time, System.Globalization.CultureInfo.CurrentCulture);
-                DateTime end_date = DateTime.Parse(App.end_time, System.Globalization.CultureInfo.CurrentCulture);
-
-                if (DateTime.Now < end_date && DateTime.Now > start_date)
-                {
-                    exit_with_msg("不要玩游戏啦，快去睡觉");
-                }
+                CheckCurrentTime();
             }
 
-            today_game_time += 1;
-            if (today_game_time % 10 == 0)
+            g_today_game_time += 1;
+            if (g_today_game_time % 10 == 0)
             {
                 UpdateGameTime();
+            }
+        }
+
+        private void CheckCurrentTime()
+        {
+            // 检测游戏时间
+            DateTime start_date = DateTime.Parse(App.start_time, System.Globalization.CultureInfo.CurrentCulture);
+            DateTime end_date = DateTime.Parse(App.end_time, System.Globalization.CultureInfo.CurrentCulture);
+
+            if (DateTime.Now < end_date && DateTime.Now > start_date)
+            {
+                g_is_disable_game_time = true;
             }
         }
     }
