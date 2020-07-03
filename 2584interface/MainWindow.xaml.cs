@@ -59,6 +59,8 @@ namespace _2584interface
             InitializeDB();
             ReadGameTime();
             StartCloseTimer();
+
+            newGame();
         }
 
         // 初始化数据库
@@ -173,7 +175,7 @@ namespace _2584interface
         {
             if (today_game_time > 3600)
             {
-                exit_with_msg("今天游戏时长已经超过一小时啦！");
+                exit_with_msg("今天游戏时长已经超过一小时啦，不允许再玩啦！");
                 return;
             }
 
@@ -193,11 +195,6 @@ namespace _2584interface
             b.TakeEvilAction(action);
             action = evil.ChooseAction(b);
             b.TakeEvilAction(action);
-        }
-
-        private void mainCanvas_Loaded(object sender, RoutedEventArgs e)
-        {
-            newGame();
         }
 
         private void button_Click(object sender, RoutedEventArgs e)

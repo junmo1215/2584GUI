@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="2584" Height="700" Width="500" KeyDown="Window_KeyDown" Icon="resource/favicon.ico" ResizeMode="NoResize">
     <Grid x:Name="mainRect" Background="#FFFAF8EF">
-        <Canvas x:Name="mainCanvas" HorizontalAlignment="Center" Height="400" VerticalAlignment="Top" Width="400" Panel.ZIndex="-3" Loaded="mainCanvas_Loaded" Margin="46,200,46,0">
+        <Canvas x:Name="mainCanvas" HorizontalAlignment="Center" Height="400" VerticalAlignment="Top" Width="400" Panel.ZIndex="-3" Margin="46,200,46,0">
             <Canvas.Background>
                 <ImageBrush ImageSource="resource/board.png" Stretch="Fill"/>
             </Canvas.Background>
